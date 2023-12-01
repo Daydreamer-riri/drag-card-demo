@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { MotionValue, SpringOptions } from 'framer-motion'
 import { motion, useDragControls, useSpring } from 'framer-motion'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { columnCount, matrix, stack } from '../../app/flow/utils'
 
 const springOptions: SpringOptions = {
@@ -12,10 +12,20 @@ const springOptions: SpringOptions = {
   stiffness: 200,
 }
 
+const rowGap = 10
+const columnGap = 10
+
+const rate = 0.6
+
+const screenWidthToItemWidth = (screenWidth: number) => screenWidth * rate + columnGap * 2
+const screenHeightToItemHeight = (screenHeight: number) => screenHeight * rate + rowGap * 2
+const itemWidthToScreenWidth = (itemWidth: number) => (itemWidth - columnGap * 2) / rate
+const itemHeightToScreenHeight = (itemHeight: number) => (itemHeight - rowGap * 2) / rate
+
 function getCoords(size: number[]) {
   const [w, h] = size
-  const screenWidth = w / 0.75
-  const screenHeight = h / 0.75
+  const screenWidth = itemWidthToScreenWidth(w)
+  const screenHeight = itemHeightToScreenHeight(h)
   return stack.map((item) => {
     const [y, x] = item
     const isOffsetItem = x % 2 === 1
@@ -38,7 +48,6 @@ export function Waterfall() {
   const aroundIndexes = getAroundIndexes(2)
 
   const constraintsRef = useRef<HTMLDivElement>(null)
-  const dragDomRef = useRef<HTMLDivElement>(null)
 
   const coords = useMemo(() => {
     return getCoords(size)
@@ -47,7 +56,7 @@ export function Waterfall() {
   useEffect(() => {
     const screenWidth = window.innerWidth
     const screenHeight = window.innerHeight
-    const size = [screenWidth * 0.75, screenHeight * 0.75]
+    const size = [screenWidthToItemWidth(screenWidth), screenHeightToItemHeight(screenHeight)]
     setSize(size)
     setIsInit(true)
     const [w, h] = size
@@ -59,6 +68,8 @@ export function Waterfall() {
   const [w, h] = size
 
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const selectedId = Number(searchParams.get('id') ?? '-1')
 
   if (!isInit)
     return
@@ -70,7 +81,6 @@ export function Waterfall() {
         drag
         dragMomentum={false}
         dragControls={dragControls}
-        ref={dragDomRef}
         onDragEnd={() => {
           const newIndex = getActiveIndex()
           setActiveIndex(newIndex)
@@ -85,7 +95,7 @@ export function Waterfall() {
             return (
               <div
                 key={index}
-                style={{ zIndex: isActive ? 10 : 0, width: w, height: h, padding: 20, position: 'absolute', top: item.top, left: item.left }}
+                style={{ zIndex: isActive ? 10 : 0, width: w, height: h, padding: `${rowGap}px ${columnGap}px`, position: 'absolute', top: item.top, left: item.left }}
                 onClick={() => {
                   if (index !== activeIndex)
                     setActiveIndex(index)
