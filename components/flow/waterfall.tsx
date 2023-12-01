@@ -8,6 +8,8 @@ import { columnCount, matrix, stack } from '../../app/flow/utils'
 const springOptions: SpringOptions = {
   damping: 30,
   bounce: 1,
+  mass: 0.5,
+  stiffness: 200,
 }
 
 function getCoords(size: number[]) {
