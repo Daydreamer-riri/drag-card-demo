@@ -1,21 +1,10 @@
 'use client'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { MotionValue, SpringOptions } from 'framer-motion'
+import type { MotionValue } from 'framer-motion'
 import { motion, useDragControls, useSpring } from 'framer-motion'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { columnCount, matrix, stack } from '../../app/flow/utils'
-
-const springOptions: SpringOptions = {
-  damping: 30,
-  bounce: 1,
-  mass: 0.5,
-  stiffness: 200,
-}
-
-const rowGap = 10
-const columnGap = 10
-
-const rate = 0.6
+import { columnGap, rate, rowGap, springOptions } from './constants'
 
 const screenWidthToItemWidth = (screenWidth: number) => screenWidth * rate + columnGap * 2
 const screenHeightToItemHeight = (screenHeight: number) => screenHeight * rate + rowGap * 2
@@ -68,8 +57,8 @@ export function Waterfall() {
   const [w, h] = size
 
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const selectedId = Number(searchParams.get('id') ?? '-1')
+  // const searchParams = useSearchParams()
+  // const selectedId = Number(searchParams.get('id') ?? '-1')
 
   if (!isInit)
     return
