@@ -5,6 +5,7 @@ import { motion, useDragControls, useSpring } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { columnCount, matrix, stack } from '../../app/flow/utils'
 import { columnGap, rate, rowGap, springOptions } from './constants'
+import { Content } from './content'
 
 const screenWidthToItemWidth = (screenWidth: number) => screenWidth * rate + columnGap * 2
 const screenHeightToItemHeight = (screenHeight: number) => screenHeight * rate + rowGap * 2
@@ -35,6 +36,8 @@ export function Waterfall() {
   const y: MotionValue<number> = useSpring(0, springOptions)
   const [activeIndex, _setActiveIndex] = useState(0)
   const aroundIndexes = getAroundIndexes(2)
+
+  const [selectedId, setSelectedId] = useState<number | null>(null)
 
   const constraintsRef = useRef<HTMLDivElement>(null)
 
@@ -89,7 +92,8 @@ export function Waterfall() {
                   if (index !== activeIndex)
                     setActiveIndex(index)
                   else
-                    router.push(`?id=${index}`)
+                    setSelectedId(index)
+                    // router.push(`?id=${index}`)
                 }}
               >
                 <motion.div
@@ -103,6 +107,7 @@ export function Waterfall() {
           })
         }
       </motion.div>
+      <Content selectedId={selectedId} back={() => setSelectedId(null)} />
     </motion.div>
   )
 

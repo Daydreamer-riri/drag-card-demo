@@ -1,14 +1,11 @@
 'use client'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { springOptions } from './constants'
 import styles from './content.module.css'
 
-export function Content() {
-  const searchParams = useSearchParams()
-  const selectedId = searchParams.get('id')
-
-  const router = useRouter()
+export function Content({ selectedId, back }: { selectedId: number | null; back: () => void }) {
+  // const searchParams = useSearchParams()
+  // const selectedId = searchParams.get('id')
 
   return (
     <AnimatePresence>
@@ -26,7 +23,7 @@ export function Content() {
           >
             <motion.div
               className={styles.close}
-              onClick={() => router.back()}
+              onClick={() => back()}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
