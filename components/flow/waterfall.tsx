@@ -1,10 +1,9 @@
 'use client'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { SpringOptions } from 'framer-motion'
-import { AnimatePresence, motion, useDragControls, useMotionValue, useSpring } from 'framer-motion'
+import { motion, useDragControls, useSpring } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { columnCount, matrix, stack } from '../../app/flow/utils'
-import { Content } from './content'
 
 const springOptions: SpringOptions = {
   damping: 30,
@@ -52,6 +51,7 @@ export function Waterfall() {
     const [w, h] = size
     x.jump(-w * (columnCount / 2) + screenWidth / 2)
     y.jump(-h * (columnCount / 2) + screenHeight / 2 - ((columnCount + 1) % 2 === 0 ? h / 2 : 0))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const [w, h] = size
@@ -102,7 +102,6 @@ export function Waterfall() {
           })
         }
       </motion.div>
-      <Content />
     </motion.div>
   )
 
@@ -113,7 +112,6 @@ export function Waterfall() {
   }
 
   function getActiveIndex() {
-    const [i, j] = stack[activeIndex]
     const aroundIndexes = getAroundIndexes(2)
 
     const [currX, currY] = [x.get(), y.get()]
