@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { SpringOptions } from 'framer-motion'
+import type { MotionValue, SpringOptions } from 'framer-motion'
 import { motion, useDragControls, useSpring } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { columnCount, matrix, stack } from '../../app/flow/utils'
@@ -30,8 +30,8 @@ export function Waterfall() {
   const [isInit, setIsInit] = useState(false)
   const [size, setSize] = useState([0, 0])
   const dragControls = useDragControls()
-  const x = useSpring(0, springOptions)
-  const y = useSpring(0, springOptions)
+  const x: MotionValue<number> = useSpring(0, springOptions)
+  const y: MotionValue<number> = useSpring(0, springOptions)
   const [activeIndex, _setActiveIndex] = useState(0)
   const aroundIndexes = getAroundIndexes(2)
 
@@ -114,12 +114,13 @@ export function Waterfall() {
   function getActiveIndex() {
     const aroundIndexes = getAroundIndexes(2)
 
+    const [xv, yv] = [x.getVelocity(), y.getVelocity()]
     const [currX, currY] = [x.get(), y.get()]
     let resIndex = 0
     let minDistance = Number.POSITIVE_INFINITY
     for (const index of aroundIndexes) {
       const { x, y } = coords[index]
-      const distance = Math.sqrt((x - currX) ** 2 + (y - currY) ** 2) + (index === activeIndex ? 100 : 0)
+      const distance = Math.sqrt((x - (currX + xv / 30)) ** 2 + (y - (currY + yv / 10)) ** 2) + (index === activeIndex ? 100 : 0)
       if (distance < minDistance) {
         resIndex = index
         minDistance = distance
