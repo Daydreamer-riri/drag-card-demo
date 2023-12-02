@@ -1,14 +1,21 @@
-.container {
+.contentContainer {
+  --screen-height: 100vh;
+  --screen-height: 100dvh;
+  
   position: fixed;
-  translate: 0 !important;
-  top: 0;
-  left: 0;
+  height: calc(3 * var(--screen-height));
+  width: 100vw;
+  top: calc(-1 * var(--screen-height));
+}
+
+.container {
   width: 100vw;
   height: 100vh;
   height: 100dvh;
   display: grid;
   place-items: center;
   font-size: 75px;
+  position: relative;
 }
 
 .close {

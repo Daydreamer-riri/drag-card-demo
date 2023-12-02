@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { MotionValue } from 'framer-motion'
 import { motion, useDragControls, useSpring } from 'framer-motion'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { columnCount, matrix, stack } from '../../app/flow/utils'
 import { columnGap, rate, rowGap, springOptions } from './constants'
 
@@ -57,8 +57,14 @@ export function Waterfall() {
   const [w, h] = size
 
   const router = useRouter()
-  // const searchParams = useSearchParams()
-  // const selectedId = Number(searchParams.get('id') ?? '-1')
+  const searchParams = useSearchParams()
+  const selectedId = Number(searchParams.get('id') ?? '-1')
+
+  useEffect(() => {
+    if (selectedId === -1)
+      return
+    setActiveIndex(selectedId)
+  }, [selectedId])
 
   if (!isInit)
     return
