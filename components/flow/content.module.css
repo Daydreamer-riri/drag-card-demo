@@ -3,9 +3,9 @@
   --screen-height: 100dvh;
   
   position: fixed;
-  height: calc(3 * var(--screen-height));
+  height: calc(100 * var(--screen-height));
   width: 100vw;
-  top: calc(-1 * var(--screen-height));
+  top: 0;
 }
 
 .container {

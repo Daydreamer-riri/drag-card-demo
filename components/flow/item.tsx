@@ -21,8 +21,15 @@ export function Item({ isDetail, index, opacityValue }: { isDetail: boolean; ind
             // layoutId={`card-${selectedId}`}
       key={index}
       className={styles.container}
-      style={{ opacity: opacityValue ?? 1, border: '1px solid #000', background: '#eee', zIndex: 11, scale: isDetail ? 1 : rate }}
-      // {...(isDetail ? detailOptions : {})}
+      style={{
+        opacity: opacityValue ?? 1,
+        position: 'absolute',
+        top: `calc(${index} * var(--screen-height))`,
+        border: '1px solid #000',
+        background: '#eee',
+        zIndex: 11,
+        scale: isDetail ? 1 : rate,
+      }}
     >{isDetail
       && (
         <motion.div

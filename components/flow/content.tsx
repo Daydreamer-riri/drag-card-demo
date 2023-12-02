@@ -1,5 +1,5 @@
 'use client'
-import { AnimatePresence, motion, useMotionValue, useMotionValueEvent, useSpring } from 'framer-motion'
+import { AnimatePresence, motion, useMotionValue, useSpring } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { rate, springOptions } from './constants'
@@ -17,33 +17,33 @@ export function Content() {
   const searchParams = useSearchParams()
   const selectedId = searchParams.get('id')
   const router = useRouter()
-  const [canDrag, setCanDrag] = useState(true)
-  const isReplacingRef = useRef(false)
 
   const y = useSpring(0, springOptions)
 
-  useMotionValueEvent(y, 'change', (latest) => {
-    if (isReplacingRef.current)
-      return
-
-    if (latest > window.innerHeight - 1) {
-      setCanDrag(true)
-      router.replace(`?id=${Number(selectedId) - 1}`)
-      isReplacingRef.current = true
-    }
-
-    else if (latest < -window.innerHeight + 1) {
-      setCanDrag(true)
+  const onDragEnd = () => {
+    const latest = y.get()
+    const origin = -Number(selectedId) * window.innerHeight
+    const distance = latest - origin
+    if (distance < -100) {
+      if (Number(selectedId) === 100) {
+        y.set(origin)
+        return
+      }
+      y.set(origin - window.innerHeight)
       router.replace(`?id=${Number(selectedId) + 1}`)
-      isReplacingRef.current = true
     }
-  })
-
-  useEffect(() => {
-    y.jump(0)
-    isReplacingRef.current = false
-    setCanDrag(true)
-  }, [selectedId, y])
+    else if (distance > 100) {
+      if (Number(selectedId) === 0) {
+        y.set(origin)
+        return
+      }
+      y.set(origin + window.innerHeight)
+      router.replace(`?id=${Number(selectedId) - 1}`)
+    }
+    else {
+      y.set(origin)
+    }
+  }
 
   const unSelectedOpacity = useMotionValue(0)
 
@@ -52,32 +52,23 @@ export function Content() {
       unSelectedOpacity.set(0)
   }, [selectedId])
 
+  const prevSelectedId = usePrevious(selectedId)
+  if (prevSelectedId === null && selectedId !== null)
+    y.jump(-Number(selectedId) * window.innerHeight)
+
   return (
     <AnimatePresence>
       {selectedId !== null
         ? (
           <motion.div
-            drag={canDrag ? 'y' : false}
+            drag="y"
             className={styles.contentContainer}
-            style={{ y }}
+            style={{ y, transformOrigin: `center calc(${selectedId} * var(--screen-height) + var(--screen-height) / 2)` }}
             dragMomentum={false}
-            dragConstraints={{ bottom: selectedId === '0' ? 0 : void 0 }}
             onDragStart={() => {
               unSelectedOpacity.set(1)
             }}
-            onDragEnd={() => {
-              if (y.get() > 100) {
-                if (selectedId === '0')
-                  return
-                y.set(window.innerHeight)
-                setCanDrag(false)
-              }
-              else if (y.get() < -100) {
-                setCanDrag(false)
-                y.set(-window.innerHeight)
-              }
-              else { y.set(0) }
-            }}
+            onDragEnd={onDragEnd}
             {...detailOptions}
           >
             <Item
@@ -98,4 +89,30 @@ export function Content() {
         : null}
     </AnimatePresence>
   )
+}
+
+function usePrevious<T>(value: T): T | null {
+  const currentRef = useRef<T>(value)
+  const previousRef = useRef<T | null>(null)
+  if (value !== currentRef.current) {
+    previousRef.current = currentRef.current
+    currentRef.current = value
+  }
+
+  return previousRef.current
+}
+
+function useWindowHeight() {
+  const [height, setHeight] = useState(0)
+  useEffect(() => {
+    setHeight(window.innerHeight)
+    const onResize = () => {
+      setHeight(window.innerHeight)
+    }
+    window.addEventListener('resize', onResize)
+    return () => {
+      window.removeEventListener('resize', onResize)
+    }
+  }, [])
+  return height
 }

@@ -70,7 +70,12 @@ export function Waterfall() {
     return
 
   return (
-    <motion.div layoutRoot ref={constraintsRef} style={{ width: '100vw', height: '100dvh', overflow: 'hidden', position: 'relative' }}>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      ref={constraintsRef}
+      style={{ width: '100vw', height: '100dvh', overflow: 'hidden', position: 'relative' }}
+    >
       <motion.div
         style={{ width: w * columnCount, height: h * columnCount + 1, x, y }}
         drag
