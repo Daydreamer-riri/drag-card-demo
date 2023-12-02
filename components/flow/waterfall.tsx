@@ -96,16 +96,19 @@ export function Waterfall() {
               <div
                 key={index}
                 style={{ zIndex: isActive ? 10 : 0, width: w, height: h, padding: `${rowGap}px ${columnGap}px`, position: 'absolute', top: item.top, left: item.left }}
-                onClick={() => {
-                  if (index !== activeIndex)
-                    setActiveIndex(index)
-                  else
-                    router.push(`?id=${index}`)
-                }}
               >
                 <motion.div
                   style={{ background: '#eee', zIndex: isActive ? 10 : 0, border: '1px solid #000', height: '100%', display: 'grid', placeItems: 'center', fontSize: 45 }}
                   layoutId={`card-${index}`}
+                  onClick={() => {
+                    if (!isActive)
+                      setActiveIndex(index)
+                  }}
+                  whileTap={isActive ? { scale: 0.95 } : {}}
+                  onTap={() => {
+                    if (isActive)
+                      router.push(`?id=${index}`)
+                  }}
                 >
                   {index}
                 </motion.div>
