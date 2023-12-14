@@ -20,9 +20,9 @@ function getCoords(size: number[]) {
     const isOffsetItem = x % 2 === 1
     return {
       x: -(x * w + w / 2 - screenWidth / 2),
-      y: -(y * h + (isOffsetItem ? (h / 2) : 0) + h / 2 - screenHeight / 2),
+      y: -(y * h - (isOffsetItem ? (h / 2) : 0) + h / 2 - screenHeight / 2),
       left: x * w,
-      top: y * h + (isOffsetItem ? (h / 2) : 0),
+      top: y * h - (isOffsetItem ? (h / 2) : 0),
     }
   })
 }
@@ -55,7 +55,7 @@ export function Waterfall() {
     setIsInit(true)
     const [w, h] = size
     x.jump(-w * (columnCount / 2) + screenWidth / 2)
-    y.jump(-h * (columnCount / 2) + screenHeight / 2 - ((columnCount + 1) % 2 === 0 ? h / 2 : 0))
+    y.jump(-h * (columnCount / 2) + screenHeight / 2 + ((columnCount + 1) % 2 === 0 ? h / 2 : 0))
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

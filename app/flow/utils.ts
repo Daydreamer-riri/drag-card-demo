@@ -12,25 +12,25 @@ export function printSpiralMatrix(n: number) {
   let top = 0
   let bottom = n - 1
   while (left <= right && top <= bottom) {
-    for (let column = left; column <= right; column++) {
-      matrix[top][column] = num
-      stack[num] = [top, column]
+    for (let row = top; row <= bottom; row++) {
+      matrix[row][left] = num
+      stack[num] = [row, left]
       num--
     }
-    for (let row = top + 1; row <= bottom; row++) {
-      matrix[row][right] = num
-      stack[num] = [row, right]
+    for (let column = left + 1; column <= right; column++) {
+      matrix[bottom][column] = num
+      stack[num] = [bottom, column]
       num--
     }
     if (left < right && top < bottom) {
-      for (let column = right - 1; column > left; column--) {
-        matrix[bottom][column] = num
-        stack[num] = [bottom, column]
+      for (let row = bottom - 1; row > top; row--) {
+        matrix[row][right] = num
+        stack[num] = [row, right]
         num--
       }
-      for (let row = bottom; row > top; row--) {
-        matrix[row][left] = num
-        stack[num] = [row, left]
+      for (let column = right; column > left; column--) {
+        matrix[top][column] = num
+        stack[num] = [top, column]
         num--
       }
     }
