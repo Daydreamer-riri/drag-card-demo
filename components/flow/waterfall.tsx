@@ -38,9 +38,14 @@ export function Waterfall() {
 
   const constraintsRef = useRef<HTMLDivElement>(null)
 
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const selectedId = Number(searchParams.get('id') ?? '-1')
+  const countSize = Number(searchParams.get('size') ?? '100')
+
   const coords = useMemo(() => {
-    return getCoords(size)
-  }, [size])
+    return getCoords(size).slice(0, countSize)
+  }, [size, countSize])
 
   useEffect(() => {
     const screenWidth = window.innerWidth
@@ -55,10 +60,6 @@ export function Waterfall() {
   }, [])
 
   const [w, h] = size
-
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const selectedId = Number(searchParams.get('id') ?? '-1')
 
   useEffect(() => {
     if (selectedId === -1)
@@ -134,6 +135,8 @@ export function Waterfall() {
     let resIndex = 0
     let minDistance = Number.POSITIVE_INFINITY
     for (const index of aroundIndexes) {
+      if (!coords[index])
+        continue
       const { x, y } = coords[index]
       const distance = Math.sqrt((x - (currX + xv / 30)) ** 2 + (y - (currY + yv / 10)) ** 2) + (index === activeIndex ? 100 : 0)
       if (distance < minDistance) {
